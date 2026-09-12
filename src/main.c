@@ -34,18 +34,25 @@ int main(void) {
         if (strcmp(args[0], "exit") == 0)
             break;
 
+        if (strcmp(args[0], "cd") == 0) {
+            if (args[1] == NULL) {
+                perror("shellforge: missing path parameter\n");
+            } else {
+                if (chdir(args[1]) != 0) {
+                    perror("Directory change failed");
+                }
+            }
+            continue;
+        }
+
         pid_t pid = fork();
 
         if (pid == 0) {
             execvp(args[0], args);
-            perror("Command execution error");
+            perror("Execution error");
             exit(1);
-        }
-        else if (pid > 0) {
+        } else {
             waitpid(pid, NULL, 0);
-        }
-        else {
-            perror("Fork creation error");
         }
     }
 
